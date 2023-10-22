@@ -11,6 +11,11 @@ bun start
 
 Install craco for adding this webpack config
 
+<details open>
+  <summary>Hello</summary>
+  World!
+</details>
+
 ```jsx
 const path = require("path");
 const webpack = require("webpack");
