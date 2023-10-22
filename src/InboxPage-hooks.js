@@ -3,17 +3,15 @@ import { FloatingInbox } from "./FloatingInbox-hooks";
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 const InboxPage = () => {
+  const [loggingOut, setLoggingOut] = useState(false); // Add this line
+
   const [signer, setSigner] = useState(null);
-
   const { primaryWallet, handleLogOut } = useDynamicContext();
-
   const isConnected = !!primaryWallet;
-
   const getAndSetSigner = async () => {
     const signer = await primaryWallet.connector.getSigner();
     setSigner(signer);
   };
-
   useEffect(() => {
     if (primaryWallet && !signer) {
       getAndSetSigner();
@@ -21,7 +19,6 @@ const InboxPage = () => {
       setSigner(null);
     }
   }, [primaryWallet]);
-  const [loggingOut, setLoggingOut] = useState(false); // Add this line
 
   const handleLogout = async () => {
     setLoggingOut(true); // Set loggingOut to true when logout begins

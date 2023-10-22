@@ -1,4 +1,4 @@
-# XMTP PWA with Privy Tutorial
+# XMTP PWA with Dynamic Tutorial
 
 ### Installation
 
@@ -7,63 +7,96 @@ bun install
 bun start
 ```
 
-This tutorial will guide you through the process of creating an XMTP app with Privy.
+#### Troubleshooting
+
+Install craco for adding this webpack config
+
+```json
+const path = require("path");
+const webpack = require("webpack");
+
+module.exports = {
+  webpack: {
+    alias: {
+      "date-fns/min": path.resolve(__dirname, "node_modules/date-fns/index.js"),
+      "date-fns/subSeconds": path.resolve(
+        __dirname,
+        "node_modules/date-fns/index.js"
+      ),
+      "date-fns/isAfter": path.resolve(
+        __dirname,
+        "node_modules/date-fns/index.js"
+      ),
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
+      }),
+    ],
+    resolve: {
+      fallback: {
+        buffer: require.resolve("buffer/"),
+      },
+    },
+  },
+};
+```
+
+This tutorial will guide you through the process of creating an XMTP app with Dynamic.
 
 ### Step 1: Setup
 
-First, you need to import the necessary libraries and components. In your index.js file, import the `PrivyProvider` from @privy-io/react-auth and wrap your main component with it.
+First, you need to import the necessary libraries and components. In your index.js file, import the `DynamicProvider` from @Dynamic-io/react-auth and wrap your main component with it.
 
 ```jsx
-import { PrivyProvider } from "@privy-io/react-auth";
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum-all";
 ```
 
 ```jsx
-<PrivyProvider
-appId={process.env.REACT_APP_PRIVY_APP_ID}
-onSuccess={(user) => console.log(User ${user.id} logged in!)}
+<DynamicContextProvider
+  settings={{
+    environmentId: "f0b977d0-b712-49f1-af89-2a24c47674da",
+    walletConnectors: [EthereumWalletConnectors],
+  }}
 >
-<InboxPage />
-</PrivyProvider>
+  <InboxPage />
+</DynamicProvider>
 ```
 
 ### Step 2: User Authentication
 
-In your main component, use the `usePrivy` hook to get the user's authentication status and other details.
+In your main component, use the `useDynamicContext` hook to get the user's authentication status and other details.
 
 ```jsx
-const { ready, authenticated, user, login, logout } = usePrivy();
-```
+import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
-### Step 3: Wallet Integration
-
-Use the `useWallets` hook to get the user's wallets. Then, find the embedded wallet and set it as the signer.
-
-```jsx
+const [signer, setSigner] = useState(null);
+const { primaryWallet, handleLogOut } = useDynamicContext();
+const isConnected = !!primaryWallet;
+const getAndSetSigner = async () => {
+  const signer = await primaryWallet.connector.getSigner();
+  setSigner(signer);
+};
 useEffect(() => {
-  const getSigner = async () => {
-    const embeddedWallet =
-      wallets.find((wallet) => wallet.walletClientType === "privy") ||
-      wallets[0];
-    if (embeddedWallet) {
-      const provider = await embeddedWallet.getEthersProvider();
-      setSigner(provider.getSigner());
-    }
-  };
-
-  if (wallets.length > 0) {
-    getSigner();
+  if (primaryWallet && !signer) {
+    getAndSetSigner();
+  } else if (!primaryWallet && signer) {
+    setSigner(null);
   }
+}, [primaryWallet]);
 ```
 
-### Step 4: XMTP Integration
+### Step 3: XMTP Integration
 
 In your `Home` component, use the `useClient` hook from `@xmtp/react-sdk` to get the XMTP client.
 
 ```jsx
-const { client, error, isLoading, initialize } = useClient();
+import { Client, useClient } from "@xmtp/react-sdk";
+await initialize({ keys, options, signer });
 ```
 
-### Step 5: Message Handling
+### Step 4: Message Handling
 
 In your `MessageContainer` component, use the `useMessages` and `useSendMessage` hooks from `@xmtp/react-sdk` to get the messages and send messages.
 
@@ -72,7 +105,7 @@ const { messages, isLoading } = useMessages(conversation);
 const { sendMessage } = useSendMessage();
 ```
 
-### Step 6: Conversation Handling
+### Step 5: Conversation Handling
 
 In your ListConversations component, use the useConversations and useStreamConversations hooks from @xmtp/react-sdk to get the conversations and stream new conversations.
 
@@ -81,24 +114,4 @@ const { conversations } = useConversations();
 const { error } = useStreamConversations(onConversation);
 ```
 
-### Step 7: Logout Handling
-
-Finally, handle the logout process by setting the isConnected state to false, wiping the keys, and removing the signer.
-
-```jsx
-const handleLogout = async () => {
-  setIsConnected(false);
-  const address = await getAddress(signer);
-  wipeKeys(address);
-  setSigner(null);
-  setIsOnNetwork(false);
-  setSelectedConversation(null);
-  localStorage.removeItem("isOnNetwork");
-  localStorage.removeItem("isConnected");
-  if (typeof onLogout === "function") {
-    onLogout();
-  }
-};
-```
-
-That's it! You've now created an XMTP app with Privy.
+That's it! You've now created an XMTP app with Dynamic.
