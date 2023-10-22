@@ -9,8 +9,9 @@ bun install
 bun start
 ```
 
-<details open>
-  <summary>  Troubleshooting</summary>
+<details >
+  <summary><h4>Troubleshooting</h4></summary>
+
 Install craco for adding this webpack config
 
 ```jsx
