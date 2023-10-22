@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   webpack: {
@@ -13,8 +14,15 @@ module.exports = {
         "node_modules/date-fns/index.js"
       ),
     },
+    plugins: [
+      new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
+      }),
+    ],
     resolve: {
-      fallback: {},
+      fallback: {
+        buffer: require.resolve("buffer/"),
+      },
     },
   },
 };
