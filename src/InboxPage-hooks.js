@@ -3,27 +3,39 @@ import { FloatingInbox } from "./FloatingInbox-hooks";
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 const InboxPage = () => {
-  const [loggingOut, setLoggingOut] = useState(false); // Add this line
-
   const [signer, setSigner] = useState(null);
+  // Use the DynamicContext to get the primaryWallet and handleLogOut function
   const { primaryWallet, handleLogOut } = useDynamicContext();
+  // Check if the primaryWallet is connected
   const isConnected = !!primaryWallet;
+  // Define a function to get and set the signer
   const getAndSetSigner = async () => {
+    // Get the signer from the primaryWallet's connector
     const signer = await primaryWallet.connector.getSigner();
+    // Set the signer
     setSigner(signer);
   };
+  // Use an effect to get and set the signer when the primaryWallet changes
   useEffect(() => {
+    // If there is a primaryWallet and no signer, get and set the signer
     if (primaryWallet && !signer) {
       getAndSetSigner();
-    } else if (!primaryWallet && signer) {
+    }
+    // If there is no primaryWallet and there is a signer, set the signer to null
+    else if (!primaryWallet && signer) {
       setSigner(null);
     }
   }, [primaryWallet]);
 
+  const [loggingOut, setLoggingOut] = useState(false); // Add this line
+  // Define a function to handle logout
   const handleLogout = async () => {
-    setLoggingOut(true); // Set loggingOut to true when logout begins
+    // Set loggingOut to true when logout begins
+    setLoggingOut(true);
+    // Call the handleLogOut function from the DynamicContext
     await handleLogOut();
-    setLoggingOut(false); // Set loggingOut to false when logout ends
+    // Set loggingOut to false when logout ends
+    setLoggingOut(false);
   };
 
   const isPWA = true;

@@ -1,5 +1,7 @@
 # XMTP PWA with Dynamic Tutorial
 
+This tutorial will guide you through the process of creating an XMTP app with Dynamic.
+
 ### Installation
 
 ```bash
@@ -7,14 +9,9 @@ bun install
 bun start
 ```
 
-#### Troubleshooting
-
-Install craco for adding this webpack config
-
 <details open>
-  <summary>Hello</summary>
-  World!
-</details>
+  <summary>  Troubleshooting</summary>
+Install craco for adding this webpack config
 
 ```jsx
 const path = require("path");
@@ -47,7 +44,7 @@ module.exports = {
 };
 ```
 
-This tutorial will guide you through the process of creating an XMTP app with Dynamic.
+</details>
 
 ### Step 1: Setup
 
@@ -77,16 +74,25 @@ In your main component, use the `useDynamicContext` hook to get the user's authe
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 const [signer, setSigner] = useState(null);
+// Use the DynamicContext to get the primaryWallet and handleLogOut function
 const { primaryWallet, handleLogOut } = useDynamicContext();
+// Check if the primaryWallet is connected
 const isConnected = !!primaryWallet;
+// Define a function to get and set the signer
 const getAndSetSigner = async () => {
+  // Get the signer from the primaryWallet's connector
   const signer = await primaryWallet.connector.getSigner();
+  // Set the signer
   setSigner(signer);
 };
+// Use an effect to get and set the signer when the primaryWallet changes
 useEffect(() => {
+  // If there is a primaryWallet and no signer, get and set the signer
   if (primaryWallet && !signer) {
     getAndSetSigner();
-  } else if (!primaryWallet && signer) {
+  }
+  // If there is no primaryWallet and there is a signer, set the signer to null
+  else if (!primaryWallet && signer) {
     setSigner(null);
   }
 }, [primaryWallet]);
