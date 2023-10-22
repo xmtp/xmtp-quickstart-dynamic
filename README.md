@@ -12,7 +12,7 @@ bun start
 <details >
   <summary><h4>Troubleshooting</h4></summary>
 
-Install craco for adding this webpack config
+If you are experiencing package issues you can install Craco and this is `craco.config.js`
 
 ```jsx
 const path = require("path");
