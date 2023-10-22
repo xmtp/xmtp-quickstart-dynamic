@@ -11,7 +11,7 @@ bun start
 
 Install craco for adding this webpack config
 
-```json
+```jsx
 const path = require("path");
 const webpack = require("webpack");
 
