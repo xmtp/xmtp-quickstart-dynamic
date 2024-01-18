@@ -4,11 +4,18 @@ import {
   useMessages,
   useSendMessage,
   useStreamMessages,
+  useClient,
 } from "@xmtp/react-sdk";
 import MessageItem from "./MessageItem";
 
-export const MessageContainer = ({ conversation, client, isPWA = false }) => {
+export const MessageContainer = ({
+  conversation,
+  isPWA = false,
+  isContained = false,
+}) => {
   const messagesEndRef = useRef(null);
+
+  const { client } = useClient();
   const { messages, isLoading } = useMessages(conversation);
   const [streamedMessages, setStreamedMessages] = useState([]);
 
@@ -19,6 +26,9 @@ export const MessageContainer = ({ conversation, client, isPWA = false }) => {
       justifyContent: "space-between",
       height: "100%",
       fontSize: isPWA == true ? "1.2em" : ".9em", // Increased font size
+    },
+    loadingText: {
+      textAlign: "center",
     },
     messagesList: {
       paddingLeft: "5px",
@@ -57,13 +67,14 @@ export const MessageContainer = ({ conversation, client, isPWA = false }) => {
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!isContained)
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
     <div style={styles.messagesContainer}>
       {isLoading ? (
-        <small className="loading">Loading messages...</small>
+        <small style={styles.loadingText}>Loading messages...</small>
       ) : (
         <>
           <ul style={styles.messagesList}>

@@ -1,6 +1,8 @@
 import React from "react";
+import { useClient } from "@xmtp/react-sdk";
 
-const MessageItem = ({ message, senderAddress, client, isPWA = false }) => {
+const MessageItem = ({ message, senderAddress, isPWA = false }) => {
+  const { client } = useClient();
   const styles = {
     messageContent: {
       backgroundColor: "lightblue",
@@ -48,9 +50,7 @@ const MessageItem = ({ message, senderAddress, client, isPWA = false }) => {
         return <div style={styles.renderedMessage}>{message?.content}</div>;
       }
     } catch {
-      return message?.fallbackContent ? (
-        message?.fallbackContent
-      ) : message?.contentFallback ? (
+      return message?.contentFallback ? (
         message?.contentFallback
       ) : (
         <div style={styles.renderedMessage}>{message?.content}</div>
@@ -63,13 +63,14 @@ const MessageItem = ({ message, senderAddress, client, isPWA = false }) => {
   return (
     <li
       style={isSender ? styles.senderMessage : styles.receiverMessage}
-      key={message.id}>
+      key={message.id}
+    >
       <div style={styles.messageContent}>
         {renderMessage(message)}
         <div style={styles.footer}>
           <span style={styles.timeStamp}>
             {`${new Date(message.sentAt).getHours()}:${String(
-              new Date(message.sentAt).getMinutes(),
+              new Date(message.sentAt).getMinutes()
             ).padStart(2, "0")}`}
           </span>
         </div>
