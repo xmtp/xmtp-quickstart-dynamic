@@ -9,51 +9,13 @@ bun install
 bun start
 ```
 
-<details >
-  <summary><h4>Troubleshooting</h4></summary>
-
-If you are experiencing package issues you can install Craco and this is `craco.config.js`
-
-```jsx
-const path = require("path");
-const webpack = require("webpack");
-
-module.exports = {
-  webpack: {
-    alias: {
-      "date-fns/min": path.resolve(__dirname, "node_modules/date-fns/index.js"),
-      "date-fns/subSeconds": path.resolve(
-        __dirname,
-        "node_modules/date-fns/index.js"
-      ),
-      "date-fns/isAfter": path.resolve(
-        __dirname,
-        "node_modules/date-fns/index.js"
-      ),
-    },
-    plugins: [
-      new webpack.ProvidePlugin({
-        Buffer: ["buffer", "Buffer"],
-      }),
-    ],
-    resolve: {
-      fallback: {
-        buffer: require.resolve("buffer/"),
-      },
-    },
-  },
-};
-```
-
-</details>
-
 ### Step 1: Setup
 
-First, you need to import the necessary libraries and components. In your index.js file, import the `DynamicProvider` from @Dynamic-io/react-auth and wrap your main component with it.
+First, you need to import the necessary libraries and components. In your index.js file, import the `DynamicProvider` and wrap your main component with it.
 
 ```jsx
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
-import { EthereumWalletConnectors } from "@dynamic-labs/ethereum-all";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 ```
 
 ```jsx
@@ -81,10 +43,16 @@ const { primaryWallet, handleLogOut } = useDynamicContext();
 const isConnected = !!primaryWallet;
 // Define a function to get and set the signer
 const getAndSetSigner = async () => {
-  // Get the signer from the primaryWallet's connector
-  const signer = await primaryWallet.connector.getSigner();
-  // Set the signer
-  setSigner(signer);
+  // Get the internal wallet client from the primary wallet's connector
+  const internalWalletClient = await primaryWallet.connector.getWalletClient();
+  // Create a new wallet client with the chain, transport, and account from the internal wallet client
+  const walletClient = createWalletClient({
+    chain: internalWalletClient.chain,
+    transport: custom(internalWalletClient.transport),
+    account: primaryWallet.address,
+  });
+  // Set the signer to the new wallet client
+  setSigner(walletClient);
 };
 // Use an effect to get and set the signer when the primaryWallet changes
 useEffect(() => {
@@ -101,29 +69,16 @@ useEffect(() => {
 
 ### Step 3: XMTP Integration
 
-In your `Home` component, use the `useClient` hook from `@xmtp/react-sdk` to get the XMTP client.
+Head to our docs to understand XMTP's concepts
 
-```jsx
-import { Client, useClient } from "@xmtp/react-sdk";
-await initialize({ keys, options, signer });
-```
+- [Get started](https://xmtp.org/docs/build/get-started?sdk=js)
+- [Authentication](https://xmtp.org/docs/build/authentication?sdk=js)
+- [Conversations](https://xmtp.org/docs/build/conversations?sdk=js)
+- [Messages](https://xmtp.org/docs/build/messages/?sdk=js)
+- [Streams](https://xmtp.org/docs/build/streams/?sdk=js)
 
-### Step 4: Message Handling
+#### Troubleshooting
 
-In your `MessageContainer` component, use the `useMessages` and `useSendMessage` hooks from `@xmtp/react-sdk` to get the messages and send messages.
+If you get into issues with `Buffer` and `polyfills` check out the fix below:
 
-```jsx
-const { messages, isLoading } = useMessages(conversation);
-const { sendMessage } = useSendMessage();
-```
-
-### Step 5: Conversation Handling
-
-In your ListConversations component, use the useConversations and useStreamConversations hooks from @xmtp/react-sdk to get the conversations and stream new conversations.
-
-```jsx
-const { conversations } = useConversations();
-const { error } = useStreamConversations(onConversation);
-```
-
-That's it! You've now created an XMTP app with Dynamic.
+- [Check out Buffer issue](https://github.com/xmtp/xmtp-js/issues/487)
