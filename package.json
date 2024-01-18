@@ -4,25 +4,25 @@
   "private": true,
   "start_url": "/",
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test"
   },
   "peerDependencies": {
     "react": ">=16.0.0",
     "react-dom": ">=16.0.0"
   },
   "dependencies": {
-    "@craco/craco": "^7.1.0",
-    "@dynamic-labs/ethereum-all": "^0.17.30",
-    "@dynamic-labs/sdk-react-core": "^0.17.30",
-    "@xmtp/react-sdk": "^2.2.6",
+    "@dynamic-labs/ethereum": "^1.0.5",
+    "@dynamic-labs/sdk-react-core": "^1.0.4",
+    "@xmtp/react-sdk": "^latest",
     "buffer": "^6.0.3",
     "ethers": "^5.7.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.7",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "viem": "^2.2.0"
   },
   "eslintConfig": {
     "extends": [

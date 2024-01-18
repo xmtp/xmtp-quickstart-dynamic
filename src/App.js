@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InboxPage from "./InboxPage-hooks";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
-import { EthereumWalletConnectors } from "@dynamic-labs/ethereum-all";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 
 export default function App({}) {
   const [ready, setReady] = useState(false);

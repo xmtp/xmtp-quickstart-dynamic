@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { FloatingInbox } from "./FloatingInbox-hooks";
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { createWalletClient, custom } from "viem";
 
 const InboxPage = () => {
   const [signer, setSigner] = useState(null);
   // Use the DynamicContext to get the primaryWallet and handleLogOut function
   const { primaryWallet, handleLogOut } = useDynamicContext();
-  // Check if the primaryWallet is connected
-  const isConnected = !!primaryWallet;
   // Define a function to get and set the signer
   const getAndSetSigner = async () => {
-    // Get the signer from the primaryWallet's connector
-    const signer = await primaryWallet.connector.getSigner();
-    // Set the signer
-    setSigner(signer);
+    const internalWalletClient =
+      await primaryWallet.connector.getWalletClient();
+    const walletClient = createWalletClient({
+      chain: internalWalletClient.chain,
+      transport: custom(internalWalletClient.transport),
+      account: primaryWallet.address,
+    });
+
+    console.log(walletClient);
+
+    setSigner(walletClient);
   };
   // Use an effect to get and set the signer when the primaryWallet changes
   useEffect(() => {

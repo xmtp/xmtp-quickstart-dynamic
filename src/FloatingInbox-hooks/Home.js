@@ -149,8 +149,14 @@ export default function Home({ wallet, env, isPWA = false, onLogout }) {
 
   const getAddress = async (signer) => {
     try {
+      //ethers
       if (signer && typeof signer.getAddress === "function") {
         return await signer.getAddress();
+      }
+      //viem
+      else if (signer && typeof signer.getAddresses === "function") {
+        const [address] = await signer.getAddresses();
+        return address;
       }
       return null;
     } catch (e) {
@@ -163,6 +169,7 @@ export default function Home({ wallet, env, isPWA = false, onLogout }) {
       env: env ? env : getEnv(),
     };
     const address = await getAddress(signer);
+    console.log(address);
     if (!address) return;
     let keys = loadKeys(address);
     if (!keys) {
