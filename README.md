@@ -84,3 +84,5 @@ useEffect(() => {
   }
 }, [primaryWallet]);
 ```
+
+That's it! You've now created an XMTP app with 0xPass & Wagmi.
