@@ -1,15 +1,33 @@
-# XMTP PWA with Dynamic Tutorial
+# XMTP PWA with WalletConnect & Wagmi
 
-This tutorial will guide you through the process of creating an XMTP app with Dynamic.
+![xmtp](https://github.com/xmtp/xmtp-quickstart-reactjs/assets/1447073/3f2979ec-4d13-4c3d-bf20-deab3b2ffaa1)
 
-### Installation
+## Installation
 
 ```bash
-bun install
-bun start
+yarn install
+yarn dev
 ```
 
-### Step 1: Setup
+## Concepts
+
+Head to our docs to understand XMTP's concepts
+
+- [Get started](https://xmtp.org/docs/build/get-started/overview?sdk=react)
+- [Authentication](https://xmtp.org/docs/build/authentication?sdk=react)
+- [Conversations](https://xmtp.org/docs/build/conversations?sdk=react)
+- [Messages](https://xmtp.org/docs/build/messages/?sdk=react)
+- [Streams](https://xmtp.org/docs/build/streams/?sdk=react)
+
+#### Troubleshooting
+
+If you get into issues with `Buffer` and `polyfills` check out the fix below:
+
+- [Check out Buffer issue](https://github.com/xmtp/xmtp-js/issues/487)
+
+## Dynamic
+
+### Setup
 
 First, you need to import the necessary libraries and components. In your index.js file, import the `DynamicProvider` and wrap your main component with it.
 
@@ -29,7 +47,7 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 </DynamicProvider>
 ```
 
-### Step 2: User Authentication
+### User authentication
 
 In your main component, use the `useDynamicContext` hook to get the user's authentication status and other details.
 
